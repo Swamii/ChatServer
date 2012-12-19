@@ -10,11 +10,13 @@ import java.net.Socket;
 
 public class Connection implements Runnable {
 	
-	Server server;
-	Socket socket;
-	BufferedWriter writer;
-	BufferedReader reader;
-	String nick;
+	private Server server;
+	private Socket socket;
+	private BufferedWriter writer;
+	private BufferedReader reader;
+	private String nick;
+	private boolean running;
+	
 
 	public Connection(Server server, Socket socket) {
 		this.server = server;
@@ -23,8 +25,10 @@ public class Connection implements Runnable {
 	
 	@Override
 	public void run() {
+		running = true;
 		init();
 		String line;
+		
 		try {
 			while ((line = reader.readLine()) != null) {
 				if (line.startsWith("NICK:")) {
@@ -38,12 +42,19 @@ public class Connection implements Runnable {
 				}
 			}
 			
-			while ((line = reader.readLine()) != null) {
+			while ((line = reader.readLine()) != null && running) {
 				handleMessages(line);
 			}
 			
 		} catch (IOException e) {
 			System.err.println("Error reading from client.");
+		} finally {
+			try {
+				reader.close();
+				writer.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		
 	}
@@ -52,6 +63,11 @@ public class Connection implements Runnable {
 		if (line.startsWith("MESSAGE:")) {
 			String message = line.split(":")[1];
 			server.newMessage(nick, message);
+		}
+		else if (line.equals("END")) {
+			running = false;
+			write("END");
+			server.endConnection(this, nick);
 		}
 	}
 	
@@ -79,6 +95,10 @@ public class Connection implements Runnable {
 	
 	public void notifyNewUser(String nick) {
 		write("NEW USER:" + nick);
+	}
+	
+	public void notifyUserLeft(String nick) {
+		write("USER LEFT:" + nick);
 	}
 
 }
