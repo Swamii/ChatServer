@@ -58,7 +58,7 @@ public class Server {
 	// sends a new message to all clients (including the one who sent the message)
 	public synchronized void newMessage(String nick, String message) {
 		for (Connection c : connections) {
-			c.sendMessage(String.format("%s: %s", nick, message));
+			c.sendMessage(String.format("<%s> %s", nick, message));
 		}
 	}
 
