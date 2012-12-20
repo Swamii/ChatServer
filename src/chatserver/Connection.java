@@ -30,18 +30,21 @@ public class Connection implements Runnable {
 		String line;
 		
 		try {
+			// initial listen-loop, will break when a proper nick name has been supplied
 			while ((line = reader.readLine()) != null) {
+				System.out.println("Incoming: " + line);
 				if (line.startsWith("NICK:")) {
 					nick = line.split(":")[1];
 					if (server.newUser(nick)) {
-						write("NICK:OK");
+						write("NICK:OK\n");
 						break;
 					} else {
-						write("NICK:TAKEN");
+						write("NICK:TAKEN\n");
 					}
 				}
 			}
 			
+			// second listen-loop, handles things like reciving messages, will loop until the client ends the connection
 			while ((line = reader.readLine()) != null && running) {
 				handleMessages(line);
 			}
@@ -50,6 +53,7 @@ public class Connection implements Runnable {
 			System.err.println("Error reading from client.");
 		} finally {
 			try {
+				server.endConnection(this, nick);
 				reader.close();
 				writer.close();
 			} catch (IOException e) {
@@ -67,7 +71,6 @@ public class Connection implements Runnable {
 		else if (line.equals("END")) {
 			running = false;
 			write("END");
-			server.endConnection(this, nick);
 		}
 	}
 	
@@ -77,7 +80,7 @@ public class Connection implements Runnable {
 	
 	private void write(String message) {
 		try {
-			writer.write(message);
+			writer.write(message + "\n");
 			writer.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
