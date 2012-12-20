@@ -1,1 +1,12 @@
 *.class
+.project
+.classpath
+.settings/
+local.properties
+tmp/*
+*.tmp
+.DS_Store
+*.bak
+*.swp
+.loadpath
+*.launch
