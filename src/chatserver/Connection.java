@@ -36,10 +36,10 @@ public class Connection implements Runnable {
 				if (line.startsWith("NICK:")) {
 					nick = line.split(":")[1];
 					if (server.newUser(nick)) {
-						write("NICK:OK\n");
+						write("NICK:OK");
 						break;
 					} else {
-						write("NICK:TAKEN\n");
+						write("NICK:TAKEN");
 					}
 				}
 			}
