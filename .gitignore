@@ -1,8 +1,4 @@
 *.class
-.project
-.classpath
-.settings/
-local.properties
 tmp/*
 *.tmp
 .DS_Store
