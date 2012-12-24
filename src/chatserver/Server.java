@@ -64,7 +64,7 @@ public class Server {
 
 	// returns true if the nick wasn't taken
 	public synchronized boolean newUser(String nick) {
-		if (!nick.isEmpty() && !users.contains(nick)) {
+		if (!nick.isEmpty() && !users.contains(nick) && nick != null) {
 			users.add(nick);
 			
 			for (Connection c : connections) {
