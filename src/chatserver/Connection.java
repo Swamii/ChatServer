@@ -66,7 +66,7 @@ public class Connection implements Runnable {
 	
 	private void handleMessages(String line) {
 		if (line.startsWith("MESSAGE:")) {
-			String message = line.split(":")[1];
+			String message = line.substring(line.indexOf(":") + 1);
 			server.newMessage(nick, message);
 		}
 		else if (line.equals("END")) {
