@@ -45,15 +45,16 @@ public class Connection implements Runnable {
 			}
 			
 			// second listen-loop, handles things like reciving messages, will loop until the client ends the connection
-			while ((line = reader.readLine()) != null && running) {
+			while (running && (line = reader.readLine()) != null) {
 				handleMessages(line);
 			}
 			
+			server.endConnection(this, nick);
+			
 		} catch (IOException e) {
-			System.err.println("Error reading from client.");
+			System.err.println("Error reading from client: " + e.getStackTrace());
 		} finally {
 			try {
-				server.endConnection(this, nick);
 				reader.close();
 				writer.close();
 			} catch (IOException e) {

@@ -55,16 +55,26 @@ public class Server {
 		}
 	}
 	
-	// sends a new message to all clients (including the one who sent the message)
+	
+	/**
+	 * sends a new message to all clients (including the one who sent the message)
+	 * 
+	 * @param nick
+	 * @param message
+	 */
 	public synchronized void newMessage(String nick, String message) {
 		for (Connection c : connections) {
 			c.sendMessage(String.format("<%s> %s", nick, message));
 		}
 	}
 
-	// returns true if the nick wasn't taken
+	/**
+	 * returns true if the nick wasn't taken
+	 * @param nick
+	 * @return true if nick isn't taken
+	 */
 	public synchronized boolean newUser(String nick) {
-		if (!nick.isEmpty() && !users.contains(nick) && nick != null) {
+		if (nick != null && !nick.isEmpty() && !users.contains(nick)) {
 			users.add(nick);
 			
 			for (Connection c : connections) {
