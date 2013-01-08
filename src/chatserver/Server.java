@@ -55,10 +55,17 @@ public class Server {
 		}
 	}
 	
+	public synchronized String getUsersString() {
+		String usersString = "";
+		for (String user : users) {
+			usersString = usersString + "," + user;
+		}
+		return usersString;
+	}
+	
 	
 	/**
 	 * sends a new message to all clients (including the one who sent the message)
-	 * 
 	 * @param nick
 	 * @param message
 	 */

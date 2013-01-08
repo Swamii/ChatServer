@@ -37,6 +37,7 @@ public class Connection implements Runnable {
 					nick = line.split(":")[1];
 					if (server.newUser(nick)) {
 						write("NICK:OK");
+						write("NICKLIST:" + server.getUsersString());
 						break;
 					} else {
 						write("NICK:TAKEN");
