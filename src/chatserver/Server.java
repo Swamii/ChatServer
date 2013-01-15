@@ -18,11 +18,16 @@ public class Server {
 		listen();
 	}
 	
+	/**
+	 * The listen-function. It listens for clients wanting to join
+	 * and starts a thread for each connection
+	 */
 	private void listen() {
 		ServerSocket serverSocket = null;
 		try {
 			serverSocket = new ServerSocket(PORT);
 			// listening for a client wanting to connect
+			System.out.println("Listening on port " + PORT);
 			while (true) {
 				Socket s = serverSocket.accept();
 				System.out.println("Accepting connection from " + s.getInetAddress());
@@ -55,10 +60,19 @@ public class Server {
 		}
 	}
 	
+	/**
+	 * Turns the user-arraylist into a String.
+	 * Users are separated by comma.
+	 * @return
+	 */
 	public synchronized String getUsersString() {
 		String usersString = "";
-		for (String user : users) {
-			usersString = usersString + "," + user;
+		if (users.size() == 1) {
+			usersString = users.get(0);
+		} else {
+			for (String user : users) {
+				usersString = usersString + "," + user;
+			}
 		}
 		return usersString;
 	}
@@ -80,7 +94,7 @@ public class Server {
 	 * @param nick
 	 * @return true if nick isn't taken
 	 */
-	public synchronized boolean newUser(String nick) {
+	public synchronized boolean newUser(String nick, Connection connection) {
 		if (nick != null && !nick.isEmpty() && 
 							!users.contains(nick) && 
 							!nick.contains(":") &&
@@ -89,7 +103,9 @@ public class Server {
 			users.add(nick);
 			
 			for (Connection c : connections) {
-				c.notifyNewUser(nick);
+				if (!c.equals(connection)) {					
+					c.notifyNewUser(nick);
+				}
 			}
 			return true;
 		}

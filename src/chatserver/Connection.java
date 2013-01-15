@@ -16,7 +16,6 @@ public class Connection implements Runnable {
 	private BufferedReader reader;
 	private String nick;
 	private boolean running;
-	
 
 	public Connection(Server server, Socket socket) {
 		this.server = server;
@@ -35,7 +34,7 @@ public class Connection implements Runnable {
 				System.out.println("Incoming: " + line);
 				if (line.startsWith("NICK:")) {
 					nick = line.split(":")[1];
-					if (server.newUser(nick)) {
+					if (server.newUser(nick, this)) {
 						write("NICK:OK");
 						write("NICKLIST:" + server.getUsersString());
 						break;
